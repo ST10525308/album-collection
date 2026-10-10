@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 // npx expo install @expo/ui
-import { Picker } from '@expo/ui/community/picker';
+import { Picker } from '@expo/ui';
 
 type Album = {
   id: string;
@@ -61,7 +61,7 @@ export default function App() {
     }
 
     if (
-      title.trim().length < MIN_TEXT_LENGTH &&
+      title.trim().length < MIN_TEXT_LENGTH ||
       title.trim().length > MAX_TITLE_LENGTH
     ) {
       Alert.alert(
@@ -77,7 +77,7 @@ export default function App() {
     }
 
     if (
-      artist.trim().length < MIN_TEXT_LENGTH &&
+      artist.trim().length < MIN_TEXT_LENGTH ||
       artist.trim().length > MAX_ARTIST_LENGTH
     ) {
       Alert.alert(
@@ -101,7 +101,7 @@ export default function App() {
 
     const currentYear = new Date().getFullYear();
 
-    if (numericYear < MIN_YEAR) {
+    if (numericYear < MIN_YEAR || numericYear > currentYear) {
       Alert.alert(
         'Validation Error',
         `Album year must be between ${MIN_YEAR} and ${currentYear}.`
@@ -121,12 +121,7 @@ export default function App() {
 
     const numericRating = Number(rating);
 
-    if (!Number.isInteger(numericRating)) {
-      Alert.alert('Validation Error', 'Rating must be a whole number.');
-      return false;
-    }
-
-    if (numericRating < 1) {
+    if (numericRating < 1 || numericRating > MAX_RATING) {
       Alert.alert(
         'Validation Error',
         `Rating must be between 1 and ${MAX_RATING}.`
@@ -156,7 +151,9 @@ export default function App() {
       rating: Number(rating),
     };
 
-    setAlbums([temporaryAlbum]);
+    setAlbums((currentAlbums) => [
+      ...currentAlbums, 
+      temporaryAlbum]);
 
     setTitle('');
     setArtist('');
@@ -167,7 +164,7 @@ export default function App() {
 
   const handleDelete = (id: string) => {
     setAlbums((currentAlbums) =>
-      currentAlbums.filter((album) => album.id === id)
+      currentAlbums.filter((album) => album.id !== id)
     );
   };
 
